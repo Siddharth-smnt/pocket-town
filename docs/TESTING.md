@@ -27,19 +27,19 @@ CI checks out the exact PR head. Checks precede browser and Android jobs. It com
 
 ## Verification record
 
-Initial implementation checkpoint, 2026-10-17:
+Implementation verification, 2026-10-17 (the PR links the exact final CI run and tested source commit):
 
-| Check                                | Status                                                                                                |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| Unit tests                           | 33 passed locally                                                                                     |
-| Strict TypeScript and Vite build     | Passed locally                                                                                        |
-| Native project generation/sync       | Passed; default App/Preferences plugins only                                                          |
-| Local Android compilation            | Blocked at Gradle download by network restrictions; local Java is 17 and no Android SDK is configured |
-| CI browser/Android jobs              | Pending first PR run                                                                                  |
-| Visual screenshot inspection         | Pending CI screenshots                                                                                |
-| Emulator/physical phone              | Not run                                                                                               |
-| Real native test-ad display/callback | Not run on a device                                                                                   |
-| Signed release/Play submission       | Not performed                                                                                         |
+| Check                                | Status                                                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Unit tests                           | 37 passed locally, including a simulated native ad adapter                                                 |
+| Strict TypeScript and Vite build     | Passed locally                                                                                             |
+| Native project generation/sync       | Passed; default App/Preferences plugins only                                                               |
+| Local Android compilation            | Blocked at Gradle download by network restrictions; local Java is 17 and no Android SDK is configured      |
+| CI browser/Android jobs              | Both Android variants compiled and passed signature verification in CI; see PR for final browser/build run |
+| Visual screenshot inspection         | Desktop and 320px phone CI screenshots inspected; no layout clipping observed                              |
+| Emulator/physical phone              | Not run                                                                                                    |
+| Real native test-ad display/callback | Not run on a device                                                                                        |
+| Signed release/Play submission       | Not performed                                                                                              |
 
 The final PR records completed runs and commit. Pending checks are not successful checks.
 

@@ -89,6 +89,7 @@ test('mouse dragging places a piece at the visible preview', async ({ page }, in
     'Desktop pointer coordinates; phone tap flow is covered separately.',
   );
   await ready(page);
+  await page.locator('[data-index="0"]').scrollIntoViewIfNeeded();
   const tray = await page.locator('[data-index="0"]').boundingBox();
   const first = await page.locator('[data-row="7"][data-col="6"]').boundingBox();
   const second = await page.locator('[data-row="7"][data-col="7"]').boundingBox();

@@ -10,6 +10,13 @@ class AdMobTestGateway implements RewardGateway {
     const { AdMob, RewardAdPluginEvents, MaxAdContentRating } =
       await import('@capacitor-community/admob');
     const handles: PluginListenerHandle[] = [];
+    let finished = false;
+    const track = async (pending: Promise<PluginListenerHandle>): Promise<void> => {
+      const handle = await pending;
+      // Registration can finish after the outer timeout has already cleaned up.
+      if (finished || !this.healthy) await handle.remove();
+      else handles.push(handle);
+    };
     let timer: ReturnType<typeof setTimeout> | undefined;
     let showing = false;
     let expire: (reason: Error) => void = () => {};
@@ -38,19 +45,19 @@ class AdMobTestGateway implements RewardGateway {
           finish = resolve;
           fail = reject;
         });
-        handles.push(
-          await AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
-            if (showing) onReward();
+        await track(
+          AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
+            if (showing && this.healthy) onReward();
           }),
         );
-        handles.push(
-          await AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
+        await track(
+          AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
             showing = false;
             finish();
           }),
         );
-        handles.push(
-          await AdMob.addListener(RewardAdPluginEvents.FailedToShow, (error) => {
+        await track(
+          AdMob.addListener(RewardAdPluginEvents.FailedToShow, (error) => {
             showing = false;
             fail(error);
           }),
@@ -63,6 +70,7 @@ class AdMobTestGateway implements RewardGateway {
       };
       await Promise.race([operation(), timeout]);
     } finally {
+      finished = true;
       showing = false;
       clearTimeout(timer);
       await Promise.allSettled(handles.map((handle) => handle.remove()));

@@ -41,3 +41,7 @@ The build wrapper sets UI and native flags together. Default builds include App 
 Moves commit before animations; backgrounding cancels drags, suspends audio and flushes pending writes. Android Back closes a dialog or offers to exit. SystemBars and CSS safe-area values handle native insets.
 
 Local saves are editable data, with no server authority or cash value. There is no authentication, analytics, remote crash reporting, multiplayer or billing service. Test ads can contact Google only in the explicit test-ad build.
+
+## Toolchain dependency note
+
+The Capacitor CLI pulls an iOS-only `xcode` helper with an old UUID dependency. A scoped npm override pins its UUID implementation to 11.1.1 to address GHSA-w5hq-g745-h8pq. The helper uses the compatible CommonJS `v4()` API; this override is not bundled into the Android game. Recheck it when upgrading Capacitor.
