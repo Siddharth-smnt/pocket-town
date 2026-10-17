@@ -1,0 +1,41 @@
+{
+  "name": "pocket-town",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0 <25"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write src tests e2e docs *.md *.json *.ts index.html .github/workflows",
+    "format:check": "prettier --check src tests e2e docs *.md *.json *.ts index.html .github/workflows",
+    "android:sync": "node scripts/android-build.mjs sync",
+    "android:open": "cap open android",
+    "android:debug": "node scripts/android-build.mjs debug",
+    "android:bundle": "node scripts/android-build.mjs bundle",
+    "android:test-ads": "node scripts/android-build.mjs test-ads"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "8.2.1",
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/preferences": "8.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}

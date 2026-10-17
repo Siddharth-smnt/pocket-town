@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f7f0" />
+    <meta
+      name="description"
+      content="Small moves. Big little dreams. Play a relaxing block puzzle, earn bricks, and grow your own Pocket Town."
+    />
+    <title>Pocket Town — Play, clear, create.</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <svg class="icon-defs" aria-hidden="true">
+      <defs>
+        <symbol id="i-brick" viewBox="0 0 24 24">
+          <path d="m3 8 9-4 9 4v9l-9 4-9-4V8Z" />
+          <path d="m3 8 9 4 9-4M12 12v9M7 6l9 4" />
+        </symbol>
+        <symbol id="i-star" viewBox="0 0 24 24">
+          <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" /></symbol>
+        <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M4 8a8 8 0 1 1-1 7M4 3v5h5" /></symbol>
+        <symbol id="i-hint" viewBox="0 0 24 24">
+          <path d="M8 16a7 7 0 1 1 8 0l-1 2H9l-1-2Zm1 5h6M12 2v1" />
+        </symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24">
+          <path d="m8 4-5 5 5 5M3 9h11a6 6 0 0 1 0 12h-3" />
+        </symbol>
+        <symbol id="i-sound" viewBox="0 0 24 24">
+          <path d="m11 4-5 4H3v8h3l5 4V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" />
+        </symbol>
+        <symbol id="i-mute" viewBox="0 0 24 24">
+          <path d="m11 4-5 4H3v8h3l5 4V4Zm5 5 5 6m0-6-5 6" />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+        <symbol id="i-leaf" viewBox="0 0 24 24">
+          <path d="M20 3S5 2 4 12c-1 8 10 10 14 3 3-5 2-12 2-12ZM4 20 15 9" />
+        </symbol>
+        <symbol id="i-help" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3v.2" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1" />
+        </symbol>
+      </defs>
+    </svg>
+    <header class="header">
+      <a class="brand" href="./" aria-label="Pocket Town home"
+        ><span class="brand-mark"><i></i><i></i><i></i><i></i></span
+        ><span>Pocket Town<span class="brand-dot">.</span></span></a
+      >
+      <nav>
+        <span class="demo-badge">YOUR LITTLE WORLD</span
+        ><button class="icon-button" id="sound" aria-label="Turn sound on" aria-pressed="false">
+          <svg><use href="#i-mute" /></svg></button
+        ><button class="help-button" id="help">
+          <svg><use href="#i-help" /></svg><span>How to play</span>
+        </button>
+      </nav>
+    </header>
+    <main>
+      <p id="recovery-notice" class="notice hidden" role="status"></p>
+      <div id="startup-error" class="notice hidden" role="alert">
+        The game could not start. <button id="retry-start">Try again</button>
+      </div>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">
+            <svg><use href="#i-sun" /></svg> MAKE A LITTLE ROOM FOR JOY
+          </p>
+          <h1>
+            Small moves.<br class="mobile-break" />
+            Big little dreams.
+          </h1>
+          <p class="intro-copy">Clear a line. Collect some bricks. Build a world that’s yours.</p>
+        </div>
+        <div class="relaxed"><span class="status-dot"></span> Your pace. No timer.</div>
+      </section>
+      <div class="game-layout">
+        <section class="puzzle-card" aria-labelledby="puzzle-title">
+          <div class="puzzle-top">
+            <div>
+              <p class="section-label">LET’S MAKE SPACE</p>
+              <h2 id="puzzle-title">The little puzzle</h2>
+            </div>
+            <div class="score-group">
+              <div><span>SCORE</span><strong id="score">0</strong></div>
+              <div class="best-score">
+                <span
+                  ><svg><use href="#i-star" /></svg> BEST</span
+                ><strong id="best">0</strong>
+              </div>
+            </div>
+          </div>
+          <div class="board-area">
+            <div
+              id="board"
+              class="board"
+              role="grid"
+              aria-label="Puzzle board. Select a block, then tap a cell to place its top left corner. Arrow keys move; Enter places."
+            ></div>
+            <div class="game-over hidden" id="game-over">
+              <div class="game-over-inner">
+                <svg class="finish-star"><use href="#i-star" /></svg>
+                <h3>A lovely little run.</h3>
+                <p>There’s no space for these blocks.<br />Your town and bricks are safe.</p>
+                <strong id="final-score">0 points</strong
+                ><button class="primary-button" id="restart-overlay">
+                  Play another puzzle <svg><use href="#i-arrow" /></svg>
+                </button>
+              </div>
+            </div>
+            <div id="score-pop" class="score-pop" aria-hidden="true"></div>
+          </div>
+          <p class="move-hint" id="move-hint">Try the blue block in the two glowing spaces.</p>
+          <div class="piece-tray" id="tray" role="group" aria-label="Choose a block"></div>
+          <div class="puzzle-actions">
+            <button id="rotate" class="tool-button">
+              <svg><use href="#i-rotate" /></svg> Rotate</button
+            ><button id="hint" class="tool-button">
+              <svg><use href="#i-hint" /></svg> Hint</button
+            ><button id="undo" class="tool-button" disabled>
+              <svg><use href="#i-undo" /></svg> Undo</button
+            ><button id="restart" class="new-puzzle">New puzzle</button>
+          </div>
+        </section>
+        <aside class="town-column">
+          <section class="town-card" aria-labelledby="town-title">
+            <div class="town-heading">
+              <div>
+                <p class="section-label">A PLACE TO CALL YOUR OWN</p>
+                <h2 id="town-title">Your pocket town</h2>
+              </div>
+              <div class="brick-pill">
+                <svg><use href="#i-brick" /></svg><strong id="bricks">0</strong><span>bricks</span>
+              </div>
+            </div>
+            <div
+              class="town-scene"
+              id="town-scene"
+              role="img"
+              aria-label="Your miniature town"
+            ></div>
+            <div class="town-meta">
+              <span
+                ><svg><use href="#i-leaf" /></svg
+                ><span id="town-level">A fresh beginning</span></span
+              ><span id="building-count">1 / 7 places</span>
+            </div>
+            <div class="town-progress" id="town-progress" aria-label="Town progress"></div>
+          </section>
+          <section class="build-card">
+            <div class="build-icon" id="build-icon"></div>
+            <div class="build-copy">
+              <p class="section-label" id="build-label">YOUR NEXT LITTLE DREAM</p>
+              <h3 id="build-name">Corner bakery</h3>
+              <p id="build-description">Warm bread. A very happy neighbourhood.</p>
+            </div>
+            <div class="build-bottom">
+              <div class="cost-detail" id="cost-detail">
+                <svg><use href="#i-brick" /></svg
+                ><span><strong id="project-cost">3</strong> bricks to build</span>
+              </div>
+              <button id="build" class="primary-button" disabled>
+                Build bakery <svg><use href="#i-arrow" /></svg>
+              </button>
+            </div>
+            <div class="build-progress"><span id="build-progress"></span></div>
+          </section>
+          <div id="reward-container" class="hidden">
+            <button id="reward-ad" class="primary-button">Watch a test ad · +3 bricks</button>
+            <p class="test-ad-note">Optional development test. No real revenue.</p>
+          </div>
+          <div class="loop-note">
+            <span class="tiny-block"></span>
+            <p>
+              Every cleared line earns <strong>3 bricks.</strong><br />Clear several at once for a
+              little extra.
+            </p>
+          </div>
+        </aside>
+      </div>
+      <footer>
+        <span
+          ><span class="saved-dot"></span
+          ><span id="save-status">Your progress stays on this device</span></span
+        ><span>Made for little breaks & big imaginations.</span>
+      </footer>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
+    <dialog id="help-dialog" aria-label="How to play">
+      <button class="dialog-close icon-button" id="close-help" aria-label="Close instructions">
+        <svg><use href="#i-close" /></svg></button
+      ><span class="dialog-kicker">A LITTLE GUIDE</span>
+      <h2>Your town starts<br />with one small move.</h2>
+      <div class="help-step">
+        <b>1</b>
+        <p>
+          <strong>Find a home for your blocks.</strong>Drag a piece onto the board, or tap a piece
+          and then a cell. The cell is the piece’s top-left corner. Rotate whenever you like.
+        </p>
+      </div>
+      <div class="help-step">
+        <b>2</b>
+        <p>
+          <strong>Make a little space.</strong>Fill an entire row or column to clear it. Each line
+          earns 3 bricks; clearing multiple lines earns a bonus.
+        </p>
+      </div>
+      <div class="help-step">
+        <b>3</b>
+        <p>
+          <strong>Watch your world grow.</strong>Spend bricks on a new place. A new puzzle keeps
+          your town, bricks and best score.
+        </p>
+      </div>
+      <p class="demo-note">
+        This is your own offline town with seven places. Progress is saved on this device.
+        Uninstalling the app or clearing its data may remove your town. New puzzles keep your town,
+        bricks and best score. Undo lasts until your next purchase, reward, restart or app reload.
+      </p>
+      <button id="lets-play" class="primary-button">
+        Let’s build something <svg><use href="#i-arrow" /></svg>
+      </button>
+    </dialog>
+    <dialog id="restart-dialog" aria-labelledby="restart-title">
+      <h2 id="restart-title">A fresh little puzzle?</h2>
+      <p>Your town, bricks and best score will stay. Your current puzzle will be replaced.</p>
+      <div class="dialog-actions">
+        <button id="cancel-restart" class="secondary-button" autofocus>Keep playing</button
+        ><button id="confirm-restart" class="primary-button">New puzzle</button>
+      </div>
+    </dialog>
+    <dialog id="exit-dialog" aria-labelledby="exit-title">
+      <h2 id="exit-title">See you soon?</h2>
+      <p>Your latest saved town will be here when you return.</p>
+      <div class="dialog-actions">
+        <button id="cancel-exit" class="secondary-button" autofocus>Keep playing</button
+        ><button id="confirm-exit" class="primary-button">Close game</button>
+      </div>
+    </dialog>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
