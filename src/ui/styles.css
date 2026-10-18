@@ -1026,13 +1026,9 @@ dialog .primary-button {
   .build-card {
     padding: 17px;
   }
-  .play-dock {
-    position: sticky;
-    bottom: 0;
-    z-index: 6;
-    background: var(--paper);
-    padding: 10px 0 6px;
-    box-shadow: 0 -10px 18px 5px var(--paper);
+  .town-scene {
+    height: clamp(160px, 25svh, 220px);
+    aspect-ratio: auto;
   }
 }
 @media (max-width: 360px) {

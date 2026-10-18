@@ -40,6 +40,7 @@ test('home, puzzle, purchase and reload form a complete loop', async ({ page }, 
   await page.getByRole('gridcell', { name: 'Row 8, column 7, empty', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeEnabled();
   await expect(page.locator('#score')).toHaveText('120');
+  await expect(page.locator('#score-pop')).toHaveCSS('opacity', '0');
   await page.screenshot({ path: info.outputPath('game-screen.png'), fullPage: true });
   const tools = await page.locator('.puzzle-actions').boundingBox();
   expect(tools).not.toBeNull();

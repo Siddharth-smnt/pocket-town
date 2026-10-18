@@ -111,6 +111,19 @@
             <div class="town-progress" id="town-progress" aria-label="Town progress"></div>
           </section>
           <div class="home-details">
+            <div class="play-dock">
+              <button
+                id="play"
+                class="primary-button play-button"
+                aria-describedby="play-detail"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#i-play" /></svg
+                ><span id="play-label">Play puzzle</span
+                ><svg aria-hidden="true"><use href="#i-arrow" /></svg>
+              </button>
+              <p id="play-detail">Clear lines. Earn bricks. Grow your town.</p>
+            </div>
             <section class="build-card" aria-labelledby="build-name">
               <div class="build-icon" id="build-icon" aria-hidden="true"></div>
               <div class="build-copy">
@@ -134,19 +147,6 @@
             <div id="reward-container" class="hidden">
               <button id="reward-ad" class="secondary-button">Watch a test ad · +3 bricks</button>
               <p class="test-ad-note">Optional development test. No real revenue.</p>
-            </div>
-            <div class="play-dock">
-              <button
-                id="play"
-                class="primary-button play-button"
-                aria-describedby="play-detail"
-                disabled
-              >
-                <svg aria-hidden="true"><use href="#i-play" /></svg
-                ><span id="play-label">Play puzzle</span
-                ><svg aria-hidden="true"><use href="#i-arrow" /></svg>
-              </button>
-              <p id="play-detail">Clear lines. Earn bricks. Grow your town.</p>
             </div>
           </div>
         </div>

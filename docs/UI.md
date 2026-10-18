@@ -2,15 +2,15 @@
 
 ## Home
 
-The app opens on Home. Town artwork is the main visual, with the brick balance, completed places and next building together. The next project shows available bricks against its cost and changes to “Ready to build” when affordable. The primary Play/Continue button leads to the puzzle. Best score, sound and help stay easy to find.
+The app opens on Home. Town artwork is the main visual, with the brick balance and completed places together. Play appears before the next building card so starting a puzzle stays easy to find. The next project shows available bricks against its cost and changes to “Ready to build” when affordable. The primary Play/Continue button leads to the puzzle. Best score, sound and help stay easy to find.
 
-The warm palette and original SVG town are retained. Phones use one column; larger displays put the town beside its next project. Home can scroll when needed, with the play action near the bottom. No puzzle board is shown here.
+The warm palette and original SVG town are retained. Phones use one column; larger displays put the town beside its next project. Home can scroll when needed; the play action follows the town and never overlays another control. No puzzle board is shown here.
 
 ## Puzzle
 
 The puzzle screen contains a compact Home/pause header, score and best score, the 8×8 board, the three pieces, and Rotate/Hint/Undo. There is no town illustration, building card or ad button on this screen. The board accounts for viewport height so tools remain within reach on compact phones. Landscape uses the board on the left and pieces/tools on the right. Large text and unusually small windows may still require scrolling; content is never cropped to force a fixed height.
 
-Restart, sound and help live in the pause menu. Restarting an unfinished scored game requires confirmation. Building availability is indicated by a small Home dot and a short message; it does not interrupt a move or navigate automatically. Game over provides Play again and Visit your town.
+Restart, sound and help live in the pause menu. Restarting an unfinished scored game requires confirmation. Building availability is indicated by a small Home dot and a short inline message; it does not interrupt a move or navigate automatically. Game over provides Play again and Visit your town.
 
 ## Continuity and access
 

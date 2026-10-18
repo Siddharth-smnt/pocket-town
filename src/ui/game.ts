@@ -32,6 +32,11 @@ export async function mountGame(
     element('announcer').textContent = message;
   };
   function toast(message: string): void {
+    if (navigation.current === 'game') {
+      element('move-hint').textContent = message;
+      announce(message);
+      return;
+    }
     clearTimeout(toastTimer);
     element('toast').textContent = message;
     element('toast').classList.add('show');
@@ -61,7 +66,7 @@ export async function mountGame(
     const before = session.state;
     const result = session.place(selected, row, column);
     if (!result) {
-      toast('That space is a little snug. Try another spot or rotate.');
+      toast('Doesn’t fit. Try another spot or rotate.');
       return;
     }
     clearTimeout(hintTimer);
@@ -115,6 +120,8 @@ export async function mountGame(
   const navigation = new ScreenNavigation(() => {
     cancelDrag();
     clearTimeout(hintTimer);
+    clearTimeout(toastTimer);
+    element('toast').classList.remove('show');
     for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog[open]'))
       dialog.close();
     audio.pause();
@@ -184,7 +191,7 @@ export async function mountGame(
     selected = session.state.tray.findIndex(Boolean);
     render();
     void save();
-    toast('One little step back. Try a new move.');
+    toast('Move undone. Try a new spot.');
   });
   function restart(): void {
     if (puzzleBlocked()) return;
@@ -195,7 +202,7 @@ export async function mountGame(
     render();
     void save();
     view.focus(0, 0);
-    toast('A fresh board. Your town, bricks and best score are safe.');
+    toast('Fresh board. Your town and bricks are safe.');
   }
   const restartDialog = element<HTMLDialogElement>('restart-dialog');
   const pauseDialog = element<HTMLDialogElement>('pause-dialog');
