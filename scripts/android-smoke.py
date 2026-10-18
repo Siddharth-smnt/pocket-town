@@ -19,6 +19,8 @@ def adb(*args, binary=False):
     return result.stdout if binary else result.stdout.decode(errors='replace')
 
 def screenshot(name):
+    # Accessibility can update before the emulator compositor presents the new frame.
+    time.sleep(2)
     (out / f'{name}.png').write_bytes(adb('exec-out', 'screencap', '-p', binary=True))
 
 def tree():
@@ -82,6 +84,7 @@ try:
     current, _ = wait_for('The little puzzle')
     if any('A little breather.' in v for n in current.iter('node') for v in values(n)):
         raise AssertionError('Android Back did not close the pause menu')
+    screenshot('03b-resumed-puzzle')
     adb('shell', 'input', 'keyevent', '4')
     wait_for('Make yourself at home.')
     adb('shell', 'am', 'force-stop', package)
