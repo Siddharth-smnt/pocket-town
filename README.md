@@ -6,6 +6,9 @@ An offline Android block puzzle. Clear an 8×8 board, collect bricks, and grow a
 
 ## Features
 
+- Dedicated Home for your town and buildings, with Play/Continue leading to a focused puzzle screen.
+- Pause menu for help, sound and restart; Home and Android Back retain your current board.
+
 - Tap, drag and keyboard placement; rotation, previews and free hints.
 - Simultaneous row/column clears, scoring, best score and configurable rewards.
 - Six town upgrades, single-move undo and restarts that retain town progress.
@@ -64,6 +67,7 @@ Android needs Java 21, SDK Platform 36 and Build Tools 36.0.0. See [Android setu
 
 ## Documentation
 
+- [Screens and navigation](docs/UI.md)
 - [Architecture and saving](docs/ARCHITECTURE.md)
 - [Gameplay and economy](docs/GAMEPLAY.md)
 - [Android setup](docs/ANDROID.md)

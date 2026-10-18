@@ -8,6 +8,7 @@ import { exitGame, installLifecycle } from '../platform/lifecycle';
 import type { RewardService } from '../platform/rewards';
 import { element } from './dom';
 import { installDrag } from './drag';
+import { ScreenNavigation } from './navigation';
 import { Renderer } from './renderer';
 
 export async function mountGame(
@@ -25,6 +26,8 @@ export async function mountGame(
   let toastTimer: ReturnType<typeof setTimeout> | undefined,
     hintTimer: ReturnType<typeof setTimeout> | undefined;
   const blocked = () => busy || adBusy || paused;
+  const puzzleBlocked = () =>
+    blocked() || navigation.current !== 'game' || !!document.querySelector('dialog[open]');
   const announce = (message: string) => {
     element('announcer').textContent = message;
   };
@@ -40,13 +43,13 @@ export async function mountGame(
   }
   const save = () => saves.save(session.state);
   function select(index: number): void {
-    if (blocked() || !session.state.tray[index]) return;
+    if (puzzleBlocked() || !session.state.tray[index]) return;
     selected = index;
     view.clearPreview();
     render();
   }
   function rotate(): void {
-    if (blocked() || !session.rotate(selected)) return;
+    if (puzzleBlocked() || !session.rotate(selected)) return;
     view.clearPreview();
     render();
     void save();
@@ -54,7 +57,7 @@ export async function mountGame(
     announce('Selected block rotated.');
   }
   async function place(row: number, column: number): Promise<void> {
-    if (blocked()) return;
+    if (puzzleBlocked()) return;
     const before = session.state;
     const result = session.place(selected, row, column);
     if (!result) {
@@ -90,14 +93,14 @@ export async function mountGame(
     );
     if (!hasMoves(current.board, current.tray)) {
       announce(`Puzzle complete. ${current.score} points. Your town is safe.`);
-      if (!paused) element('restart-overlay').focus();
+      if (!paused && navigation.current === 'game') element('restart-overlay').focus();
     }
     const project = PROJECTS[current.built.length];
     if (project && current.bricks >= project.cost && before.bricks < project.cost)
-      toast(`${project.name} is ready to build!`);
+      toast(`${project.name} is ready. Build it at Home!`);
   }
   function preview(row: number, column: number): void {
-    if (!blocked()) view.preview(session.state, selected, row, column);
+    if (!puzzleBlocked()) view.preview(session.state, selected, row, column);
   }
   const cancelDrag = installDrag({
     piece: (index) => session.state.tray[index],
@@ -107,8 +110,22 @@ export async function mountGame(
       void place(r, c);
     },
     clear: () => view.clearPreview(),
-    blocked,
+    blocked: puzzleBlocked,
   });
+  const navigation = new ScreenNavigation(() => {
+    cancelDrag();
+    clearTimeout(hintTimer);
+    for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog[open]'))
+      dialog.close();
+    audio.pause();
+    void saves.flush();
+    render();
+  });
+  element('play').addEventListener('click', () => {
+    if (!blocked()) navigation.play();
+  });
+  for (const id of ['go-home', 'pause-home', 'game-over-home'])
+    element(id).addEventListener('click', () => navigation.home());
   view.cells.forEach((cell, index) => {
     const row = Math.floor(index / SIZE),
       column = index % SIZE;
@@ -142,7 +159,7 @@ export async function mountGame(
   });
   element('rotate').addEventListener('click', rotate);
   element('hint').addEventListener('click', () => {
-    if (blocked()) return;
+    if (puzzleBlocked()) return;
     clearTimeout(hintTimer);
     const hint = session.hint(selected);
     if (!hint) {
@@ -161,7 +178,7 @@ export async function mountGame(
     void save();
   });
   element('undo').addEventListener('click', () => {
-    if (blocked() || !session.undo()) return;
+    if (puzzleBlocked() || !session.undo()) return;
     cancelDrag();
     clearTimeout(hintTimer);
     selected = session.state.tray.findIndex(Boolean);
@@ -170,7 +187,7 @@ export async function mountGame(
     toast('One little step back. Try a new move.');
   });
   function restart(): void {
-    if (blocked()) return;
+    if (puzzleBlocked()) return;
     cancelDrag();
     clearTimeout(hintTimer);
     session.restart();
@@ -181,8 +198,18 @@ export async function mountGame(
     toast('A fresh board. Your town, bricks and best score are safe.');
   }
   const restartDialog = element<HTMLDialogElement>('restart-dialog');
+  const pauseDialog = element<HTMLDialogElement>('pause-dialog');
+  element('pause-game').addEventListener('click', () => {
+    if (puzzleBlocked()) return;
+    cancelDrag();
+    audio.pause();
+    pauseDialog.showModal();
+  });
+  for (const id of ['resume-game', 'close-pause'])
+    element(id).addEventListener('click', () => pauseDialog.close());
   const askRestart = () => {
     if (blocked()) return;
+    pauseDialog.close();
     if (session.state.score > 0 && hasMoves(session.state.board, session.state.tray))
       restartDialog.showModal();
     else restart();
@@ -204,14 +231,17 @@ export async function mountGame(
     toast(`${project.name} is open. Welcome to the neighbourhood!`);
     announce(`${project.name} built. ${session.state.built.length + 1} places in your town.`);
   });
-  element('sound').addEventListener('click', () => {
-    session.setSound(!session.state.sound);
-    render();
-    void save();
-    audio.play('clear', session.state.sound);
-  });
+  document.querySelectorAll<HTMLButtonElement>('[data-sound]').forEach((button) =>
+    button.addEventListener('click', () => {
+      session.setSound(!session.state.sound);
+      render();
+      void save();
+      audio.play('clear', session.state.sound);
+    }),
+  );
   const help = element<HTMLDialogElement>('help-dialog');
   element('help').addEventListener('click', () => help.showModal());
+  element('game-help').addEventListener('click', () => help.showModal());
   element('close-help').addEventListener('click', () => help.close());
   element('lets-play').addEventListener('click', () => help.close());
   element('reward-container').classList.toggle('hidden', !rewards.available);
@@ -258,12 +288,13 @@ export async function mountGame(
   render();
   try {
     await installLifecycle(pause, resume, () => {
-      for (const dialog of [help, restartDialog, exitDialog])
+      for (const dialog of [help, restartDialog, pauseDialog, exitDialog])
         if (dialog.open) {
           dialog.close();
           return;
         }
-      exitDialog.showModal();
+      if (navigation.current === 'game') navigation.home();
+      else exitDialog.showModal();
     });
   } catch {
     toast('Device navigation could not be connected. Use the on-screen controls.');

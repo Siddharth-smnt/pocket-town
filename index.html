@@ -11,7 +11,7 @@
     <title>Pocket Town — Play, clear, create.</title>
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
   </head>
-  <body>
+  <body data-screen="home">
     <svg class="icon-defs" aria-hidden="true">
       <defs>
         <symbol id="i-brick" viewBox="0 0 24 24">
@@ -48,54 +48,127 @@
           <circle cx="12" cy="12" r="4" />
           <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1" />
         </symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7M7 12h14" /></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8V4Z" /></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24">
+          <path d="m3 11 9-8 9 8M5 9v12h14V9M9 21v-7h6v7" />
+        </symbol>
       </defs>
     </svg>
-    <header class="header">
-      <a class="brand" href="./" aria-label="Pocket Town home"
-        ><span class="brand-mark"><i></i><i></i><i></i><i></i></span
-        ><span>Pocket Town<span class="brand-dot">.</span></span></a
-      >
-      <nav>
-        <span class="demo-badge">YOUR LITTLE WORLD</span
-        ><button class="icon-button" id="sound" aria-label="Turn sound on" aria-pressed="false">
-          <svg><use href="#i-mute" /></svg></button
-        ><button class="help-button" id="help" aria-label="How to play">
-          <svg><use href="#i-help" /></svg><span>How to play</span>
-        </button>
-      </nav>
-    </header>
-    <main>
+    <main id="app">
       <p id="recovery-notice" class="notice hidden" role="status"></p>
       <div id="startup-error" class="notice hidden" role="alert">
         The game could not start. <button id="retry-start">Try again</button>
       </div>
-      <section class="intro">
-        <div>
+      <section id="home-screen" class="home-screen" aria-labelledby="home-title">
+        <header class="home-header">
+          <div class="brand" aria-label="Pocket Town">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>Pocket Town<span class="brand-dot">.</span></span>
+          </div>
+          <nav aria-label="Home options">
+            <button
+              class="icon-button"
+              id="sound"
+              data-sound
+              aria-label="Turn sound on"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#i-mute" /></svg>
+            </button>
+            <button class="icon-button" id="help" aria-label="How to play">
+              <svg aria-hidden="true"><use href="#i-help" /></svg>
+            </button>
+          </nav>
+        </header>
+        <div class="home-intro">
           <p class="eyebrow">
-            <svg><use href="#i-sun" /></svg> MAKE A LITTLE ROOM FOR JOY
+            <svg aria-hidden="true"><use href="#i-sun" /></svg> YOUR OWN LITTLE WORLD
           </p>
-          <h1>
-            Small moves.<br class="mobile-break" />
-            Big little dreams.
-          </h1>
-          <p class="intro-copy">Clear a line. Collect some bricks. Build a world that’s yours.</p>
+          <h1 id="home-title" tabindex="-1">Make yourself at home.</h1>
+          <p>A few good moves. A little more town.</p>
         </div>
-        <div class="relaxed"><span class="status-dot"></span> Your pace. No timer.</div>
-      </section>
-      <div class="game-layout">
-        <section class="puzzle-card" aria-labelledby="puzzle-title">
-          <div class="puzzle-top">
-            <div>
-              <p class="section-label">LET’S MAKE SPACE</p>
-              <h2 id="puzzle-title">The little puzzle</h2>
-            </div>
-            <div class="score-group">
-              <div><span>SCORE</span><strong id="score">0</strong></div>
-              <div class="best-score">
-                <span
-                  ><svg><use href="#i-star" /></svg> BEST</span
-                ><strong id="best">0</strong>
+        <div class="home-layout">
+          <section class="town-card" aria-labelledby="town-title">
+            <div class="town-heading">
+              <h2 id="town-title">Your town</h2>
+              <div class="brick-pill" aria-label="Brick balance">
+                <svg aria-hidden="true"><use href="#i-brick" /></svg><strong id="bricks">0</strong
+                ><span>bricks</span>
               </div>
+            </div>
+            <div
+              class="town-scene"
+              id="town-scene"
+              role="img"
+              aria-label="Your miniature town"
+            ></div>
+            <div class="town-meta">
+              <span id="town-level">A fresh beginning</span
+              ><span id="building-count">1 / 7 places</span>
+            </div>
+            <div class="town-progress" id="town-progress" aria-label="Town progress"></div>
+          </section>
+          <div class="home-details">
+            <section class="build-card" aria-labelledby="build-name">
+              <div class="build-icon" id="build-icon" aria-hidden="true"></div>
+              <div class="build-copy">
+                <p class="section-label" id="build-label">UP NEXT</p>
+                <h3 id="build-name">Corner bakery</h3>
+                <p id="build-description">Warm bread. A very happy neighbourhood.</p>
+              </div>
+              <div class="build-bottom">
+                <div class="cost-detail" id="cost-detail"></div>
+                <button id="build" class="primary-button" disabled>Build bakery</button>
+              </div>
+              <div class="build-progress" aria-hidden="true"><span id="build-progress"></span></div>
+            </section>
+            <div class="home-record">
+              <span
+                ><svg aria-hidden="true"><use href="#i-star" /></svg> Personal best
+                <strong id="home-best">0</strong></span
+              >
+              <span class="no-timer"><span class="status-dot"></span> No timer</span>
+            </div>
+            <div id="reward-container" class="hidden">
+              <button id="reward-ad" class="secondary-button">Watch a test ad · +3 bricks</button>
+              <p class="test-ad-note">Optional development test. No real revenue.</p>
+            </div>
+            <div class="play-dock">
+              <button
+                id="play"
+                class="primary-button play-button"
+                aria-describedby="play-detail"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#i-play" /></svg
+                ><span id="play-label">Play puzzle</span
+                ><svg aria-hidden="true"><use href="#i-arrow" /></svg>
+              </button>
+              <p id="play-detail">Clear lines. Earn bricks. Grow your town.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="game-screen" class="game-screen" aria-labelledby="puzzle-title" hidden inert>
+        <header class="game-header">
+          <button id="go-home" class="home-button" aria-label="Back to home">
+            <svg aria-hidden="true"><use href="#i-back" /></svg><span>Home</span
+            ><span id="build-ready-dot" class="ready-dot hidden" aria-hidden="true"></span>
+          </button>
+          <h1 id="puzzle-title" tabindex="-1">The little puzzle</h1>
+          <button id="pause-game" class="icon-button" aria-label="Pause game">
+            <svg aria-hidden="true"><use href="#i-pause" /></svg>
+          </button>
+        </header>
+        <div class="puzzle-content">
+          <div class="score-group" aria-label="Puzzle scores">
+            <div class="current-score"><span>SCORE</span><strong id="score">0</strong></div>
+            <div class="best-score">
+              <span
+                ><svg aria-hidden="true"><use href="#i-star" /></svg> BEST</span
+              ><strong id="best">0</strong>
             </div>
           </div>
           <div class="board-area">
@@ -107,95 +180,71 @@
             ></div>
             <div class="game-over hidden" id="game-over">
               <div class="game-over-inner">
-                <svg class="finish-star"><use href="#i-star" /></svg>
-                <h3>A lovely little run.</h3>
-                <p>There’s no space for these blocks.<br />Your town and bricks are safe.</p>
-                <strong id="final-score">0 points</strong
-                ><button class="primary-button" id="restart-overlay">
-                  Play another puzzle <svg><use href="#i-arrow" /></svg>
+                <svg class="finish-star" aria-hidden="true"><use href="#i-star" /></svg>
+                <h2>A lovely little run.</h2>
+                <p>No more spaces. Your town is safe.</p>
+                <strong id="final-score">0 points</strong>
+                <button class="primary-button" id="restart-overlay">
+                  Play again <svg aria-hidden="true"><use href="#i-arrow" /></svg>
                 </button>
+                <button class="text-button" id="game-over-home">Visit your town</button>
               </div>
             </div>
             <div id="score-pop" class="score-pop" aria-hidden="true"></div>
           </div>
           <p class="move-hint" id="move-hint">Try the blue block in the two glowing spaces.</p>
           <div class="piece-tray" id="tray" role="group" aria-label="Choose a block"></div>
-          <div class="puzzle-actions">
+          <div class="puzzle-actions" role="group" aria-label="Puzzle tools">
             <button id="rotate" class="tool-button">
-              <svg><use href="#i-rotate" /></svg> Rotate</button
-            ><button id="hint" class="tool-button">
-              <svg><use href="#i-hint" /></svg> Hint</button
-            ><button id="undo" class="tool-button" disabled>
-              <svg><use href="#i-undo" /></svg> Undo</button
-            ><button id="restart" class="new-puzzle">New puzzle</button>
+              <svg aria-hidden="true"><use href="#i-rotate" /></svg> Rotate
+            </button>
+            <button id="hint" class="tool-button">
+              <svg aria-hidden="true"><use href="#i-hint" /></svg> Hint
+            </button>
+            <button id="undo" class="tool-button" disabled>
+              <svg aria-hidden="true"><use href="#i-undo" /></svg> Undo
+            </button>
           </div>
-        </section>
-        <aside class="town-column">
-          <section class="town-card" aria-labelledby="town-title">
-            <div class="town-heading">
-              <div>
-                <p class="section-label">A PLACE TO CALL YOUR OWN</p>
-                <h2 id="town-title">Your pocket town</h2>
-              </div>
-              <div class="brick-pill">
-                <svg><use href="#i-brick" /></svg><strong id="bricks">0</strong><span>bricks</span>
-              </div>
-            </div>
-            <div
-              class="town-scene"
-              id="town-scene"
-              role="img"
-              aria-label="Your miniature town"
-            ></div>
-            <div class="town-meta">
-              <span
-                ><svg><use href="#i-leaf" /></svg
-                ><span id="town-level">A fresh beginning</span></span
-              ><span id="building-count">1 / 7 places</span>
-            </div>
-            <div class="town-progress" id="town-progress" aria-label="Town progress"></div>
-          </section>
-          <section class="build-card">
-            <div class="build-icon" id="build-icon"></div>
-            <div class="build-copy">
-              <p class="section-label" id="build-label">YOUR NEXT LITTLE DREAM</p>
-              <h3 id="build-name">Corner bakery</h3>
-              <p id="build-description">Warm bread. A very happy neighbourhood.</p>
-            </div>
-            <div class="build-bottom">
-              <div class="cost-detail" id="cost-detail">
-                <svg><use href="#i-brick" /></svg
-                ><span><strong id="project-cost">3</strong> bricks to build</span>
-              </div>
-              <button id="build" class="primary-button" disabled>
-                Build bakery <svg><use href="#i-arrow" /></svg>
-              </button>
-            </div>
-            <div class="build-progress"><span id="build-progress"></span></div>
-          </section>
-          <div id="reward-container" class="hidden">
-            <button id="reward-ad" class="primary-button">Watch a test ad · +3 bricks</button>
-            <p class="test-ad-note">Optional development test. No real revenue.</p>
-          </div>
-          <div class="loop-note">
-            <span class="tiny-block"></span>
-            <p>
-              Every cleared line earns <strong>3 bricks.</strong><br />Clear several at once for a
-              little extra.
-            </p>
-          </div>
-        </aside>
-      </div>
-      <footer>
-        <span
-          ><span class="saved-dot"></span
-          ><span id="save-status">Your progress stays on this device</span></span
-        ><span>Made for little breaks & big imaginations.</span>
+        </div>
+      </section>
+      <footer id="save-footer">
+        <span class="saved-dot" aria-hidden="true"></span
+        ><span id="save-status" role="status">Your progress stays on this device</span>
       </footer>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
-    <div id="confetti" class="confetti" aria-hidden="true"></div>
+    <dialog id="pause-dialog" aria-labelledby="pause-title">
+      <button class="dialog-close icon-button" id="close-pause" aria-label="Close pause menu">
+        <svg aria-hidden="true"><use href="#i-close" /></svg>
+      </button>
+      <p class="dialog-kicker">TAKE YOUR TIME</p>
+      <h2 id="pause-title">A little breather.</h2>
+      <p>Your puzzle will be right here.</p>
+      <button id="resume-game" class="primary-button">
+        Keep playing <svg aria-hidden="true"><use href="#i-play" /></svg>
+      </button>
+      <div class="pause-options">
+        <button id="restart" class="menu-button">
+          <svg aria-hidden="true"><use href="#i-rotate" /></svg> New puzzle
+        </button>
+        <button
+          id="sound-game"
+          class="menu-button"
+          data-sound
+          aria-label="Turn sound on"
+          aria-pressed="false"
+        >
+          <svg aria-hidden="true"><use href="#i-mute" /></svg><span>Sound off</span>
+        </button>
+        <button id="game-help" class="menu-button">
+          <svg aria-hidden="true"><use href="#i-help" /></svg> How to play
+        </button>
+        <button id="pause-home" class="menu-button">
+          <svg aria-hidden="true"><use href="#i-home" /></svg> Back to home
+        </button>
+      </div>
+    </dialog>
     <dialog id="help-dialog" aria-label="How to play">
       <button class="dialog-close icon-button" id="close-help" aria-label="Close instructions">
         <svg><use href="#i-close" /></svg></button
@@ -218,8 +267,8 @@
       <div class="help-step">
         <b>3</b>
         <p>
-          <strong>Watch your world grow.</strong>Spend bricks on a new place. A new puzzle keeps
-          your town, bricks and best score.
+          <strong>Watch your world grow.</strong>Go Home to spend bricks on a new place. A new
+          puzzle keeps your town, bricks and best score.
         </p>
       </div>
       <p class="demo-note">
@@ -228,7 +277,7 @@
         bricks and best score. Undo lasts until your next purchase, reward, restart or app reload.
       </p>
       <button id="lets-play" class="primary-button">
-        Let’s build something <svg><use href="#i-arrow" /></svg>
+        Got it <svg><use href="#i-arrow" /></svg>
       </button>
     </dialog>
     <dialog id="restart-dialog" aria-labelledby="restart-title">

@@ -14,6 +14,10 @@ const statusText: Record<SaveStatus, string> = {
 async function start(): Promise<void> {
   const saves = new SaveStore(preferencesStorage, (status) => {
     element('save-status').textContent = statusText[status];
+    element('save-footer').classList.toggle(
+      'save-warning',
+      status === 'failed' || status === 'readonly',
+    );
   });
   const loaded = await saves.load();
   if (loaded.reason !== 'future' && loaded.reason !== 'unavailable') await saves.save(loaded.state);

@@ -97,13 +97,30 @@ export class Renderer {
     element('move-hint').textContent = state.tutorial
       ? 'Try the blue block in the two glowing spaces.'
       : 'Pick a block. Find its spot. Make a little space.';
-    element('sound').innerHTML = icon(state.sound ? 'sound' : 'mute');
-    element('sound').setAttribute('aria-pressed', String(state.sound));
-    element('sound').setAttribute('aria-label', state.sound ? 'Turn sound off' : 'Turn sound on');
+    document.querySelectorAll<HTMLButtonElement>('[data-sound]').forEach((button) => {
+      button.innerHTML =
+        icon(state.sound ? 'sound' : 'mute') +
+        (button.id === 'sound-game' ? `<span>Sound ${state.sound ? 'on' : 'off'}</span>` : '');
+      button.setAttribute('aria-pressed', String(state.sound));
+      button.setAttribute('aria-label', state.sound ? 'Turn sound off' : 'Turn sound on');
+    });
     const over = !hasMoves(state.board, state.tray);
     element('game-over').classList.toggle('hidden', !over);
     element('board').inert = over;
     element('final-score').textContent = `${state.score.toLocaleString()} points`;
+    element('home-best').textContent = state.best.toLocaleString();
+    element<HTMLButtonElement>('play').disabled = busy;
+    element('play-label').textContent = over
+      ? 'View last puzzle'
+      : state.score > 0
+        ? 'Continue puzzle'
+        : 'Play puzzle';
+    element('play-detail').textContent = over
+      ? `${state.score.toLocaleString()} points. Ready for another little adventure?`
+      : state.score > 0
+        ? `${state.score.toLocaleString()} points · Your board is waiting for you.`
+        : 'Clear lines. Earn bricks. Grow your town.';
+    element<HTMLButtonElement>('pause-game').disabled = busy;
     element('bricks').textContent = String(state.bricks);
     const count = state.built.length + 1,
       total = PROJECTS.length + 1;
@@ -134,15 +151,23 @@ export class Renderer {
     const project = PROJECTS[state.built.length],
       button = element<HTMLButtonElement>('build');
     element('build-icon').innerHTML = buildingIcon(project?.id ?? 'park');
+    const readyToBuild = !!project && state.bricks >= project.cost;
     element('build-label').textContent = project
-      ? 'YOUR NEXT LITTLE DREAM'
+      ? readyToBuild
+        ? 'READY TO BUILD'
+        : 'UP NEXT'
       : 'LOOK WHAT YOU CREATED';
+    element('build-ready-dot').classList.toggle('hidden', !readyToBuild);
+    element('go-home').setAttribute(
+      'aria-label',
+      readyToBuild ? 'Back to home. A building is ready.' : 'Back to home',
+    );
     element('build-name').textContent = project?.name ?? 'Your town is complete';
     element('build-description').textContent =
       project?.description ??
       'Seven lovely places. All built by you. Keep playing for a new best score.';
     element('cost-detail').innerHTML = project
-      ? `${icon('brick')}<span><strong>${project.cost}</strong> bricks to build</span>`
+      ? `${icon('brick')}<span><strong>${Math.min(state.bricks, project.cost)} / ${project.cost}</strong> bricks</span>`
       : `${icon('check')}<span>Every little dream, built.</span>`;
     button.innerHTML = project
       ? 'Build ' + project.name.split(' ').at(-1) + ' ' + icon('arrow')

@@ -68,7 +68,7 @@ This enables UI/native flags together and builds a debug APK with Google's demo 
 
 The provisional ID is `com.siddharthsmnt.pockettown.dev`. Before first Play upload, choose a unique permanent package. Change `appId` in `capacitor.config.ts`, `namespace`/`applicationId` in `android/app/build.gradle`, the Java package/path for `MainActivity`, and package/custom URL strings in `strings.xml`. Then sync/build. A changed app ID creates a different app and separate saves.
 
-Version is 0.1.0, code 1. Increase `versionCode` on each Play upload; keep version names consistent.
+Version is 0.2.0, code 2. Increase `versionCode` on each Play upload; keep version names consistent.
 
 ## Common errors
 

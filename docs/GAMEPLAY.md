@@ -1,5 +1,7 @@
 # Gameplay and economy
 
+Start on Home to see your town, bricks and next building. Play puzzle (or Continue puzzle) opens a dedicated board screen. Return Home whenever you want to build; navigation does not reset the board or undo. The pause menu contains New puzzle, sound and help. Only confirming New puzzle resets a live board.
+
 Select one of three pieces and tap the top-left corner of its bounding box, or drag its preview. Rotation and hints are free. Pieces cannot overlap cells or extend beyond the 8×8 board. A fresh tray appears after all three pieces are used.
 
 Rows and columns are detected together before clearing. Their intersection is removed once, but both lines count. Game over requires that no remaining piece fits in any rotation. Hints maximize the score across the preferred piece's rotations, then try other pieces if it has no fit.

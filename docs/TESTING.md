@@ -19,7 +19,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Playwright uses desktop, Pixel 7 and 320-pixel phone viewports. It checks the opening/build/reload/restart loop, undo, hints, help, recovery, game over and desktop dragging, plus overflow and runtime errors. It captures screenshots and keeps failure traces. Phone emulation is not Android WebView testing.
+Playwright uses desktop, Pixel 7 and 320-pixel phone viewports. It checks the Home/puzzle/build/reload/restart loop, navigation without state loss, browser Back/Forward, pause/help/sound, restart cancellation, undo, hints, recovery, game over and desktop dragging. Compact portrait (320×568) and landscape (740×360) checks ensure puzzle tools remain on screen. It also checks horizontal overflow and runtime errors. It captures screenshots and keeps failure traces. Phone emulation is not Android WebView testing.
 
 ## CI
 
@@ -41,11 +41,12 @@ Implementation verification, 2026-10-17 (the PR links the exact final CI run and
 | Real native test-ad display/callback | Not run on a device                                                                                        |
 | Signed release/Play submission       | Not performed                                                                                              |
 
-The final PR records completed runs and commit. Pending checks are not successful checks.
+The PR records the exact tested commit, CI run and screenshots for the Home/puzzle redesign (2026-10-18). The table above is the original baseline, not a claim that later changes passed. Pending checks are not successful checks.
 
 ## Manual device acceptance
 
-- Cold-launch default APK in airplane mode; finish the tutorial and build the bakery.
+- Cold-launch to Home in airplane mode. Open Play, finish the tutorial, return Home and build the bakery.
+- Continue the same puzzle; check the pause menu, restart cancellation, and Home → Play → Android Back → Home. Verify a second Back offers to exit.
 - Tap/rotate/drag near each edge; background during a drag and return.
 - Clear multiple lines, undo once, buy a building and ensure undo cannot refund it.
 - Restart, background/resume, force-stop/reopen and reboot; verify saved progress.

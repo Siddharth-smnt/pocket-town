@@ -4,19 +4,20 @@ Vite bundles strict TypeScript and the prototype's HTML/CSS/SVG presentation. Ca
 
 ## Boundaries
 
-| Module                    | Responsibility                                                       |
-| ------------------------- | -------------------------------------------------------------------- |
-| `game/config.ts`          | Piece pool, board, building costs and rewards                        |
-| `game/rules.ts`           | Pure placement, rotation, clear detection and hint search            |
-| `game/session.ts`         | Atomic actions, spending and one-move undo; exposes cloned snapshots |
-| `persistence/schema.ts`   | Treat JSON as unknown, validate fields and migrate v1                |
-| `persistence/store.ts`    | Serialize writes and recover from a previous snapshot                |
-| `platform/preferences.ts` | Native Preferences and its browser localStorage fallback             |
-| `platform/rewards.ts`     | One active presentation and one eligible callback                    |
-| `platform/admob.ts`       | Lazy Android-only test-ad adapter                                    |
-| `ui/game.ts`              | Event binding and lifecycle; save before animation                   |
-| `ui/renderer.ts`          | Render snapshots without mutating them                               |
-| `ui/drag.ts`              | Pointer capture, ghost position and cancellation                     |
+| Module                    | Responsibility                                                            |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `game/config.ts`          | Piece pool, board, building costs and rewards                             |
+| `game/rules.ts`           | Pure placement, rotation, clear detection and hint search                 |
+| `game/session.ts`         | Atomic actions, spending and one-move undo; exposes cloned snapshots      |
+| `persistence/schema.ts`   | Treat JSON as unknown, validate fields and migrate v1                     |
+| `persistence/store.ts`    | Serialize writes and recover from a previous snapshot                     |
+| `platform/preferences.ts` | Native Preferences and its browser localStorage fallback                  |
+| `platform/rewards.ts`     | One active presentation and one eligible callback                         |
+| `platform/admob.ts`       | Lazy Android-only test-ad adapter                                         |
+| `ui/game.ts`              | Event binding and lifecycle; save before animation                        |
+| `ui/renderer.ts`          | Render snapshots without mutating them                                    |
+| `ui/navigation.ts`        | Home/puzzle visibility, focus and browser history without resetting state |
+| `ui/drag.ts`              | Pointer capture, ghost position and cancellation                          |
 
 UI/platform code depends on domain modules, never the reverse. Rules have no DOM, storage or Capacitor imports. This keeps them independently testable.
 
@@ -38,7 +39,7 @@ Provisional package: `com.siddharthsmnt.pockettown.dev`. Minimum API 24; compile
 
 The build wrapper sets UI and native flags together. Default builds include App and Preferences only. Test-ad mode adds AdMob. `cap sync` regenerates plugin registrations/dependencies, so always sync when switching mode.
 
-Moves commit before animations; backgrounding cancels drags, suspends audio and flushes pending writes. Android Back closes a dialog or offers to exit. SystemBars and CSS safe-area values handle native insets.
+Moves commit before animations; backgrounding cancels drags, suspends audio and flushes pending writes. Android Back closes the top dialog, returns from the puzzle to Home, or offers to exit when already Home. Screen changes cancel gestures and flush writes without resetting the game or undo. Browser Back/Forward follows the same Home/puzzle history. Cold launches and reloads start at Home; Continue restores the saved board. SystemBars and CSS safe-area values handle native insets.
 
 Local saves are editable data, with no server authority or cash value. There is no authentication, analytics, remote crash reporting, multiplayer or billing service. Test ads can contact Google only in the explicit test-ad build.
 
