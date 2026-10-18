@@ -2,6 +2,7 @@ import './ui/styles.css';
 import { SaveStore, type SaveStatus } from './persistence/store';
 import { preferencesStorage } from './platform/preferences';
 import { createRewardService } from './platform/admob';
+import { buildLabel } from './platform/build';
 import { element } from './ui/dom';
 import { mountGame } from './ui/game';
 
@@ -12,6 +13,11 @@ const statusText: Record<SaveStatus, string> = {
   readonly: 'Temporary game — your newer save is protected',
 };
 async function start(): Promise<void> {
+  void buildLabel().then((label) => {
+    document.querySelectorAll('[data-build-version]').forEach((node) => {
+      node.textContent = label;
+    });
+  });
   const saves = new SaveStore(preferencesStorage, (status) => {
     element('save-status').textContent = statusText[status];
     element('save-footer').classList.toggle(

@@ -19,11 +19,15 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Playwright uses desktop, Pixel 7 and 320-pixel phone viewports. It checks the Home/puzzle/build/reload/restart loop, navigation without state loss, browser Back/Forward, pause/help/sound, restart cancellation, undo, hints, recovery, game over and desktop dragging. Compact portrait (320×568) and landscape (740×360) checks ensure puzzle tools remain on screen. It also checks horizontal overflow and runtime errors. It captures screenshots and keeps failure traces. Phone emulation is not Android WebView testing.
+Playwright uses desktop, Pixel 7 and 320-pixel phone viewports. It checks the visible version, Home/puzzle/build/reload/restart loop, navigation without state loss, browser Back/Forward, pause/help/sound, restart cancellation, undo, hints, recovery, game over and desktop dragging. Compact portrait (320×568) and landscape (740×360) checks ensure puzzle tools remain on screen. It also checks horizontal overflow and runtime errors. It captures screenshots and keeps failure traces. Phone emulation is not Android WebView testing.
 
 ## CI
 
-CI checks out the exact PR head. Checks precede browser and Android jobs. It compiles default and test-ad APKs, verifies debug signatures and uploads the source commit/checksum beside each APK. Browser artifacts last 14 days; APKs last 30 days. Open Actions → successful run → Artifacts; downloads may require GitHub sign-in. CI never uploads to Play or uses release keys.
+CI checks out the exact PR head. Checks precede browser and Android jobs. It compiles default and test-ad APKs, verifies debug signatures, compares every packaged web asset with `dist/`, and checks native/web versions agree. Versioned APK filenames, source commit, SHA-256 checksum and package metadata are uploaded together.
+
+The `android-smoke` job downloads that exact default APK and installs it on an API 35 Pixel 2 emulator. Using Android's UI hierarchy, it checks Home and its version label, enters the puzzle, opens/closes pause with Android Back, returns Home, and cold-relaunches. It rejects a native action/title bar and captures screenshots and logs in `android-smoke-results`. This is a focused native packaging/navigation check; it does not replace the device acceptance list below or test real ad callbacks.
+
+Browser/emulator artifacts last 14 days; APKs last 30 days. Open Actions → successful run → Artifacts; downloads may require GitHub sign-in. CI never uploads to Play or uses release keys.
 
 ## Verification record
 
@@ -41,7 +45,7 @@ Implementation verification, 2026-10-17 (the PR links the exact final CI run and
 | Real native test-ad display/callback | Not run on a device                                                                                        |
 | Signed release/Play submission       | Not performed                                                                                              |
 
-The PR records the exact tested commit, CI run and screenshots for the Home/puzzle redesign (2026-10-18). The table above is the original baseline, not a claim that later changes passed. Pending checks are not successful checks.
+The PR records the exact tested commit, CI run and screenshots for the Home/puzzle redesign and subsequent Android launch fix (2026-10-18). The table above is the original baseline, not a claim that later changes passed. The emulator job was added after a physical-phone report exposed a native title bar that browser screenshots could not show. Pending checks are not successful checks.
 
 ## Manual device acceptance
 

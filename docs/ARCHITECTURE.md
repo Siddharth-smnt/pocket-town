@@ -12,6 +12,7 @@ Vite bundles strict TypeScript and the prototype's HTML/CSS/SVG presentation. Ca
 | `persistence/schema.ts`   | Treat JSON as unknown, validate fields and migrate v1                     |
 | `persistence/store.ts`    | Serialize writes and recover from a previous snapshot                     |
 | `platform/preferences.ts` | Native Preferences and its browser localStorage fallback                  |
+| `platform/build.ts`       | Display bundled web version and native app version/build                  |
 | `platform/rewards.ts`     | One active presentation and one eligible callback                         |
 | `platform/admob.ts`       | Lazy Android-only test-ad adapter                                         |
 | `ui/game.ts`              | Event binding and lifecycle; save before animation                        |
@@ -38,6 +39,8 @@ Undo is memory-only. It restores the previous move's board, score, tray and curr
 Provisional package: `com.siddharthsmnt.pockettown.dev`. Minimum API 24; compile/target API 36; Java 21. Native backup is disabled. Do not promise uninstall recovery.
 
 The build wrapper sets UI and native flags together. Default builds include App and Preferences only. Test-ad mode adds AdMob. `cap sync` regenerates plugin registrations/dependencies, so always sync when switching mode.
+
+The native activity calls AndroidX `SplashScreen.installSplashScreen` before `super.onCreate`, applying the running theme before window decoration is created. Both running and launch themes explicitly disable the native title/action bar. Splash artwork is scoped to splash attributes, not the generic `android:background`, so it cannot tile across window decorations. See Android's [splash-screen migration instructions](https://developer.android.com/develop/ui/views/launch/splash-screen/migrate). The web header supplies app navigation; Android still supplies its normal system status/navigation areas.
 
 Moves commit before animations; backgrounding cancels drags, suspends audio and flushes pending writes. Android Back closes the top dialog, returns from the puzzle to Home, or offers to exit when already Home. Screen changes cancel gestures and flush writes without resetting the game or undo. Browser Back/Forward follows the same Home/puzzle history. Cold launches and reloads start at Home; Continue restores the saved board. SystemBars and CSS safe-area values handle native insets.
 

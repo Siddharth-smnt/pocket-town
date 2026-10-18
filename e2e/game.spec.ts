@@ -7,6 +7,9 @@ async function ready(page: Page): Promise<void> {
   await expect(page.locator('body')).toHaveAttribute('data-ready', 'true');
   await expect(page.locator('#home-screen')).toBeVisible();
   await expect(page.locator('#game-screen')).toBeHidden();
+  await expect(page.locator('#home-screen [data-build-version]')).toHaveText(
+    /^Version \d+\.\d+\.\d+$/,
+  );
 }
 async function play(page: Page): Promise<void> {
   await page.locator('#play').click();

@@ -45,8 +45,9 @@ Select a phone/emulator and press Run. Re-sync after changing web code.
 ## Install on a phone
 
 1. Download a successful Actions artifact beginning `pocket-town-debug-`, or copy your local APK to the phone.
-2. Extract the artifact ZIP if needed, then open `app-debug.apk`.
+2. Extract the artifact ZIP if needed, then open `Pocket-Town-0.2.1-debug.apk`. Local Gradle builds still produce `app-debug.apk`.
 3. Allow installation from the browser/file app when Android asks, install, and open Pocket Town. You can disable that install permission afterward.
+4. Confirm Home says **Version 0.2.1 · build 3** and **Make yourself at home.** Play opens a separate puzzle screen. The pause menu also shows the version. Android's clock/status icons are expected; a second native title bar with repeated Pocket Town icons is not.
 
 With USB debugging/platform tools:
 
@@ -54,7 +55,11 @@ With USB debugging/platform tools:
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Artifacts include the source commit and SHA-256 checksum. Local and CI builds can use different debug signing keys. Signature conflicts may require uninstalling first, which can erase town progress. Permanent distribution needs a stable release signing setup.
+Artifacts include `COMMIT.txt`, `SHA256SUMS.txt` and `APK-INFO.json`. CI compares every bundled web asset with the current web build, checks the native version, and installs that same default APK for its emulator smoke test.
+
+Different CI runs and local builds can use different debug signing keys. An Android “App not installed” or signature-conflict error means the existing app was not updated. Keep the old installation if its progress matters: uninstalling or clearing its data can erase the town, and this version has no export/cloud-restore feature. Record the exact installation error before trying another approach. An in-place update with the same app ID and signing key keeps local data. Permanent distribution needs a stable release signing setup; debug artifacts are for testing.
+
+If the installed UI still has the puzzle and town on one page, check Android Settings → Apps → Pocket Town → app version. Reopen the exact versioned file from the intended Actions run and confirm installation succeeds. Clearing app data is not a fix for an old APK. The old private Sites demo is a separate deployment and does not update when an APK is built.
 
 ## Test ads
 
@@ -68,7 +73,7 @@ This enables UI/native flags together and builds a debug APK with Google's demo 
 
 The provisional ID is `com.siddharthsmnt.pockettown.dev`. Before first Play upload, choose a unique permanent package. Change `appId` in `capacitor.config.ts`, `namespace`/`applicationId` in `android/app/build.gradle`, the Java package/path for `MainActivity`, and package/custom URL strings in `strings.xml`. Then sync/build. A changed app ID creates a different app and separate saves.
 
-Version is 0.2.0, code 2. Increase `versionCode` on each Play upload; keep version names consistent.
+Version is 0.2.1, code 3. The web label comes from `package.json`; Android also reports its native version/build. Increase `versionCode` on each Play upload and update `package.json`, its lockfile and `android/app/build.gradle` together. CI rejects mismatched native/web versions.
 
 ## Common errors
 

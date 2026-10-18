@@ -13,4 +13,6 @@ local.properties
 .idea/
 *.apk
 *.aab
+artifacts/
+__pycache__/
 google-services.json

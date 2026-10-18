@@ -8,7 +8,6 @@ An offline Android block puzzle. Clear an 8×8 board, collect bricks, and grow a
 
 - Dedicated Home for your town and buildings, with Play/Continue leading to a focused puzzle screen.
 - Pause menu for help, sound and restart; Home and Android Back retain your current board.
-
 - Tap, drag and keyboard placement; rotation, previews and free hints.
 - Simultaneous row/column clears, scoring, best score and configurable rewards.
 - Six town upgrades, single-move undo and restarts that retain town progress.
@@ -82,9 +81,9 @@ Android needs Java 21, SDK Platform 36 and Build Tools 36.0.0. See [Android setu
 - `npm` not recognized: install Node 24 and reopen the terminal.
 - Missing dependencies: run `npm ci` in the folder containing `package.json`.
 - Java/SDK errors: follow `docs/ANDROID.md` and verify `java -version` reports 21.
-- Old Android UI: run `npm run android:sync` before building in Android Studio.
+- Old Android UI: the current Home shows `Version 0.2.1 · build 3` and “Make yourself at home.” Download the versioned APK from the latest successful run; confirm Android actually completes the installation. For local builds, run `npm run android:sync` before building in Android Studio.
 - No ads button: expected in the default build and browser. Use the explicit native test-ad build.
 - Save warning: progress may be lost if storage writes fail. Failed reads start a temporary game without overwriting existing data.
-- APK signature conflict: CI and local debug builds can use different keys. Uninstalling can resolve this but can erase progress.
+- APK signature conflict: different CI runs and local builds can use different debug keys. A failed update leaves the previous app installed. Keep it installed if its progress matters; uninstalling or clearing data can erase progress. See [Android installation](docs/ANDROID.md).
 
 Progress stays on the device. Uninstalling or clearing app/browser data can remove it. This version has no remote backup service.

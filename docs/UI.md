@@ -6,6 +6,8 @@ The app opens on Home. Town artwork is the main visual, with the brick balance a
 
 The warm palette and original SVG town are retained. Phones use one column; larger displays put the town beside its next project. Home can scroll when needed; the play action follows the town and never overlays another control. No puzzle board is shown here.
 
+A small version label below the brand and in the pause menu identifies the installed build. Android's native title bar is disabled; only the web app header and normal system bars should appear.
+
 ## Puzzle
 
 The puzzle screen contains a compact Home/pause header, score and best score, the 8×8 board, the three pieces, and Rotate/Hint/Undo. There is no town illustration, building card or ad button on this screen. The board accounts for viewport height so tools remain within reach on compact phones. Landscape uses the board on the left and pieces/tools on the right. Large text and unusually small windows may still require scrolling; content is never cropped to force a fixed height.
@@ -20,4 +22,4 @@ Inactive screens are hidden and inert, so they are not reachable by touch, keybo
 
 Action buttons have at least 44px targets, text labels and focus outlines. Reduced-motion preferences, safe-area insets and save failure warnings apply on both screens. Normal save status stays on Home; failed or protected saves remain visible during play.
 
-Automated browser checks cover the navigation and state transitions. Android Back, TalkBack, system insets, actual touch dragging and font scaling still need device acceptance testing for this version.
+Automated browser checks cover navigation and state transitions. The native emulator smoke test exercises Android Back and captures system bars; the PR records its actual result. TalkBack, physical touch dragging, font scaling and different devices/cutouts still need device acceptance testing for this version.
