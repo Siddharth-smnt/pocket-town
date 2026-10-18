@@ -1,7 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+const preview = process.env.POCKET_TOWN_PREVIEW === 'true';
 const config: CapacitorConfig = {
-  appId: 'com.siddharthsmnt.pockettown.dev',
-  appName: 'Pocket Town',
+  appId: `com.siddharthsmnt.pockettown.dev${preview ? '.preview' : ''}`,
+  appName: preview ? 'Pocket Town Preview' : 'Pocket Town',
   webDir: 'dist',
   includePlugins: [
     '@capacitor/app',

@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
+def previewBuild = providers.gradleProperty('pocketTownPreview').orElse('false').get().toBoolean()
 
 android {
     namespace = "com.siddharthsmnt.pockettown.dev"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.siddharthsmnt.pockettown.dev"
+        applicationId "com.siddharthsmnt.pockettown.dev${previewBuild ? '.preview' : ''}"
+        manifestPlaceholders = [appLabel: previewBuild ? 'Pocket Town Preview' : 'Pocket Town']
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 3

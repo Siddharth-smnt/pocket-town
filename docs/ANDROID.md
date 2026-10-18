@@ -44,6 +44,8 @@ Select a phone/emulator and press Run. Re-sync after changing web code.
 
 ## Install on a phone
 
+If an older Pocket Town debug build is already installed, use the **Preview** option below to keep its local progress intact.
+
 1. Download a successful Actions artifact beginning `pocket-town-debug-`, or copy your local APK to the phone.
 2. Extract the artifact ZIP if needed, then open `Pocket-Town-0.2.1-debug.apk`. Local Gradle builds still produce `app-debug.apk`.
 3. Allow installation from the browser/file app when Android asks, install, and open Pocket Town. You can disable that install permission afterward.
@@ -60,6 +62,20 @@ Artifacts include `COMMIT.txt`, `SHA256SUMS.txt` and `APK-INFO.json`. CI compare
 Different CI runs and local builds can use different debug signing keys. An Android “App not installed” or signature-conflict error means the existing app was not updated. Keep the old installation if its progress matters: uninstalling or clearing its data can erase the town, and this version has no export/cloud-restore feature. Record the exact installation error before trying another approach. An in-place update with the same app ID and signing key keeps local data. Permanent distribution needs a stable release signing setup; debug artifacts are for testing.
 
 If the installed UI still has the puzzle and town on one page, check Android Settings → Apps → Pocket Town → app version. Reopen the exact versioned file from the intended Actions run and confirm installation succeeds. Clearing app data is not a fix for an old APK. The old private Sites demo is a separate deployment and does not update when an APK is built.
+
+### Install alongside an older debug build
+
+Download the Actions artifact beginning `pocket-town-preview-`, extract it, and install **Pocket-Town-0.2.1-preview.apk**. Open **Pocket Town Preview** in your launcher. Its Home version label ends in “Preview”. It has the same game and corrected UI, with ads excluded.
+
+Preview uses `com.siddharthsmnt.pockettown.dev.preview`, so it does not replace the old Pocket Town app or touch its data. It starts a separate town; existing progress is not transferred. Keep the old app installed to retain that town. Preview is a temporary testing option, not a way to solve signing for future releases. Subsequent Preview updates still require the same signing key.
+
+To build locally:
+
+```sh
+npm run android:preview
+```
+
+The wrapper sets the Capacitor app ID and Gradle application ID together. `npm run android:sync` restores the default configuration. Android Studio builds default to the normal app; use the wrapper for Preview.
 
 ## Test ads
 

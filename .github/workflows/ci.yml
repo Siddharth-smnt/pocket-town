@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mode: [debug, test-ads]
+        mode: [debug, preview, test-ads]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -99,6 +99,10 @@ jobs:
         with:
           name: pocket-town-debug-${{ github.event.pull_request.head.sha || github.sha }}
           path: artifacts/apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: pocket-town-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/preview-apk
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -111,7 +115,9 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          script: python3 scripts/android-smoke.py artifacts/apk artifacts/android-smoke
+          script: |
+            python3 scripts/android-smoke.py artifacts/apk artifacts/android-smoke/default
+            python3 scripts/android-smoke.py artifacts/preview-apk artifacts/android-smoke/preview
       - uses: actions/upload-artifact@v7
         if: always()
         with:

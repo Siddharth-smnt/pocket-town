@@ -6,7 +6,7 @@ export async function buildLabel(): Promise<string> {
   try {
     const info = await App.getInfo();
     return info.version === __APP_VERSION__
-      ? `Version ${info.version} · build ${info.build}`
+      ? `Version ${info.version} · build ${info.build}${info.id.endsWith('.preview') ? ' · Preview' : ''}`
       : `App ${info.version} · screen version ${__APP_VERSION__}`;
   } catch {
     return `Screen version ${__APP_VERSION__}`;

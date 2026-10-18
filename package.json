@@ -19,6 +19,7 @@
     "android:sync": "node scripts/android-build.mjs sync",
     "android:open": "cap open android",
     "android:debug": "node scripts/android-build.mjs debug",
+    "android:preview": "node scripts/android-build.mjs preview",
     "android:bundle": "node scripts/android-build.mjs bundle",
     "android:test-ads": "node scripts/android-build.mjs test-ads"
   },

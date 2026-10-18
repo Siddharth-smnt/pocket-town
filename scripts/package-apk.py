@@ -11,8 +11,8 @@ from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
 mode = sys.argv[1]
-if mode not in {'debug', 'test-ads'}:
-    raise SystemExit('Expected debug or test-ads')
+if mode not in {'debug', 'preview', 'test-ads'}:
+    raise SystemExit('Expected debug, preview or test-ads')
 version = json.loads((root / 'package.json').read_text())['version']
 apk = root / 'android/app/build/outputs/apk/debug/app-debug.apk'
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
@@ -35,6 +35,9 @@ badging = subprocess.check_output([str(aapt), 'dump', 'badging', str(apk)], text
 if f"versionName='{version}'" not in badging:
     raise SystemExit('Native and web versions disagree')
 package_id = re.search(r"package: name='([^']+)'", badging).group(1)
+expected_id = 'com.siddharthsmnt.pockettown.dev' + ('.preview' if mode == 'preview' else '')
+if package_id != expected_id or config['appId'] != package_id:
+    raise SystemExit('Native and Capacitor package IDs do not match the requested build mode')
 out = root / 'artifacts/apk'
 out.mkdir(parents=True, exist_ok=True)
 name = f'Pocket-Town-{version}-{mode}.apk'

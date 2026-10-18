@@ -1,5 +1,6 @@
 """Install the exact CI artifact and exercise its visible native/WebView UI with adb."""
 import json
+import hashlib
 from pathlib import Path
 import re
 import subprocess
@@ -57,7 +58,10 @@ def launch():
     adb('shell', 'am', 'start', '-W', '-n', package + '/com.siddharthsmnt.pockettown.dev.MainActivity')
 
 try:
-    adb('install', '-r', str(folder / meta['filename']))
+    apk = folder / meta['filename']
+    if hashlib.sha256(apk.read_bytes()).hexdigest() != meta['sha256']:
+        raise AssertionError('Downloaded APK checksum does not match artifact metadata')
+    adb('install', '-r', str(apk))
     info = adb('shell', 'dumpsys', 'package', package)
     (out / 'installed-package.txt').write_text(info)
     if f"versionName={meta['version']}" not in info:

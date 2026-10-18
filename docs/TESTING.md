@@ -23,9 +23,9 @@ Playwright uses desktop, Pixel 7 and 320-pixel phone viewports. It checks the vi
 
 ## CI
 
-CI checks out the exact PR head. Checks precede browser and Android jobs. It compiles default and test-ad APKs, verifies debug signatures, compares every packaged web asset with `dist/`, and checks native/web versions agree. Versioned APK filenames, source commit, SHA-256 checksum and package metadata are uploaded together.
+CI checks out the exact PR head. Checks precede browser and Android jobs. It compiles default, separate Preview and test-ad APKs, verifies debug signatures, compares every packaged web asset with `dist/`, and checks native/web versions and package IDs agree. Versioned APK filenames, source commit, SHA-256 checksum and package metadata are uploaded together.
 
-The `android-smoke` job downloads that exact default APK and installs it on an API 35 Pixel 2 emulator. Using Android's UI hierarchy, it checks Home and its version label, enters the puzzle, opens/closes pause with Android Back, returns Home, and cold-relaunches. It rejects a native action/title bar and captures screenshots and logs in `android-smoke-results`. This is a focused native packaging/navigation check; it does not replace the device acceptance list below or test real ad callbacks.
+The `android-smoke` job downloads those exact default and Preview APKs, verifies their checksums, and installs both on an API 35 Pixel 2 emulator. For each app, using Android's UI hierarchy, it checks Home and its version label, enters the puzzle, opens/closes pause with Android Back, returns Home, and cold-relaunches. It rejects a native action/title bar and captures screenshots and logs in `android-smoke-results`, separated into `default/` and `preview/`. This is a focused native packaging/navigation check; it does not replace the device acceptance list below or test real ad callbacks.
 
 Browser/emulator artifacts last 14 days; APKs last 30 days. Open Actions → successful run → Artifacts; downloads may require GitHub sign-in. CI never uploads to Play or uses release keys.
 

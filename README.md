@@ -4,6 +4,8 @@ An offline Android block puzzle. Clear an 8×8 board, collect bricks, and grow a
 
 **Start here:** use `npm run dev` for a browser preview, or install the default debug APK from a successful [Actions run](https://github.com/Siddharth-smnt/pocket-town/actions). Neither needs a Play Console account.
 
+Already have an older debug build? Use the **Pocket Town Preview** APK to try this UI alongside the old app. It uses separate local progress and leaves the existing installation intact. See [installation](docs/ANDROID.md).
+
 ## Features
 
 - Dedicated Home for your town and buildings, with Play/Continue leading to a focused puzzle screen.
@@ -46,6 +48,7 @@ Open the local URL printed by Vite. Keep the terminal open while playing; Ctrl+C
 | `npm run android:sync`     | Build and sync default offline Android configuration    |
 | `npm run android:open`     | Open Android Studio                                     |
 | `npm run android:debug`    | Build default debug APK                                 |
+| `npm run android:preview`  | Build separate Preview app alongside an older install   |
 | `npm run android:test-ads` | Build debug APK with Google's test rewarded ads         |
 | `npm run android:bundle`   | Build unsigned release AAB; signing is separate         |
 
