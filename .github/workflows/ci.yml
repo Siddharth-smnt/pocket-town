@@ -1,0 +1,127 @@
+name: Check and build Pocket Town
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pocket-town-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+  browser:
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx --no-install playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: browser-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+  android:
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [debug, preview, test-ads]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - run: npm ci
+      - run: npm run android:${{ matrix.mode }}
+      - name: Check signature and verify packaged screens
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$APK"
+          python3 scripts/package-apk.py '${{ matrix.mode }}'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pocket-town-${{ matrix.mode }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/apk/
+          if-no-files-found: error
+          retention-days: 30
+  android-smoke:
+    needs: android
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: pocket-town-debug-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: pocket-town-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/preview-apk
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            python3 scripts/android-smoke.py artifacts/apk artifacts/android-smoke/default
+            python3 scripts/android-smoke.py artifacts/preview-apk artifacts/android-smoke/preview
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: android-smoke-results
+          path: artifacts/android-smoke/
+          if-no-files-found: warn
+          retention-days: 14
